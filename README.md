@@ -13,5 +13,3 @@ In a Relational Database, an IMS relies on interconnected tables;
 - **Categories**: Group items logically.
 - **Suppliers**: Track vendor details for restocking orders.
 - **Stock Movements/Transactions**: Logs every instance stock increases or decreases.
-
-![Relational Database tables linked by Foreign Key Relationship](images/Relational%20Database.jpg)
