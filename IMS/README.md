@@ -37,14 +37,33 @@ Four interconnected tables form the core model: **Categories, Suppliers, Product
     - **TEXT**: String values (names, descriptions, SKUs).
     - **DATETIME**: Timestamps.
 
+**Step 2**: 
+## Data Insertion and Querying.
 
-**Step 2**: Data Insertion and Querying.
+**Data Manipilation Language** (DML) handles populating, retrieving and modifying data inside existing tables. Populating the Inventory Management System (IMS) with product records and wrte queries to retrieve, filter and sort inventory data.
 
-Populating sample inventory data using **INSERT** and retrieving it using **SELECT, WHERE** and **ORDER BY**.
+The core SQL Data Operations:
+- **INSERT INTO**: Adds new rows to a table. Targeting columns and matching values.
+- **SELECT**: Retrieves columns from one or more tables. Using * selects all columns, while naming specific columns optimizes performance.
+- **WHERE**: Filters records based on logicl conditions. **(=, >, <, >=, <=, !=, LIKE, IN, AND, OR)**.
+- **ORDER BY**: Sorts out records in ascending **(ASC, default)** or descending **(DESC)** order.
+- **Calculated Columns**: Performs arithmetic direcly inside the query. **((unit_price - unit_cost) AS profit_margin)**.
 
-**Step 3**: Relational Queries and Aggregations.
+**Step 3**: 
+## Relational Queries and Aggregations.
 
-Joining tables using **INNER JOIN** and calculating stock value using **GROUP BY, SUM()** and **COUNT()**.
+They transform raw normalised tables into meaningful business metrics, such as total_stock value, supplier dependence and category performance.
+
+The core SQL Joining and Aggregation CCOncepts:
+- **INNER JOIN**: Matches rows from two or more tables where the join condition is met. If a product has no assigned category, it will not appear in an **INNER JOIN** between **Products** and **Categories**.
+- **LEFT JOIN(OUTER JOIN)**: Retrieves all rows from the primary (left) table, even if there are no matching records in the joined (right) table. This is essential for dicovering categories with zero products or products with no transactional history.
+- **Table Alias(p,c,s,sm)**: Short names assigned to tables in the **FROM** clause to keep multi-table queries readable and avoid typing long table names.
+- **GROUP BY**: Collapses multiple rows with identical values in specified columns into summary rows.
+- **Aggregate Functions**:
+    - **COUNT()**: Counts the number of rows or non-null column values.
+    - **SUM()**: Adds up numeric values accross grouped rows.
+    - **AVG()**: Calculates the mean value across grouped rows.
+- **HAVING Clause**: Filters aggregated groups after the **GROUP BY** calculation takes place. (Unlike **WHERE**, which filters individual rows before grouping occurs).
 
 **Step 4**: Data Intergrity and Business Logic.
 
