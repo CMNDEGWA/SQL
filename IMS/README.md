@@ -1,7 +1,7 @@
 # SQL
 All my studies on SQL, through Simple SQL Projects
 
-## Inventory Management System
+## Inventory Management System IMS
 
 An Inventory Management System (IMS) is a software application designed to track goods, stock levels, purchases and sales
 across a business.
@@ -14,11 +14,11 @@ In a Relational Database, an IMS relies on interconnected tables;
 - **Suppliers**: Track vendor details for restocking orders.
 - **Stock Movements/Transactions**: Logs every instance stock increases or decreases.
 
-![Relational Database tables linked by Foreign Key Relationship](images/Relational%20Database.jpg)
+![Relational Database tables linked by Foreign Key Relationship](../images/Relational%20Database.jpg)
 
 ### Project Roadmap
 
-**Step 1**: Database Schemea Design and  Data Definition Language.
+**Step 1**: Database Schemea Design and Data Definition Language.
 
 Designing tables and defining primary or foreign key relationships using **CREATE TABLE**.
 
@@ -34,3 +34,6 @@ Joining tables using **INNER JOIN** and calculating stock value using **GROUP BY
 
 Enforcing business rues using **CONSTRAINTS** (e.g **CHECK (quantity >= 0)**), foreign key cascades and database triggers.
 
+## Database Schema Design and Data Definition Language
+
+This defines how
