@@ -1,7 +1,7 @@
 # SQL
 All my studies on SQL, through Simple SQL Projects
 
-## Inventory Management System
+## Inventory Management System [Click to View](IMS)
 
 An Inventory Management System (IMS) is a software application designed to track goods, stock levels, purchases and sales
 across a business.
