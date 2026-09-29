@@ -18,9 +18,25 @@ In a Relational Database, an IMS relies on interconnected tables;
 
 ### Project Roadmap
 
-**Step 1**: Database Schemea Design and Data Definition Language.
+**Step 1**:
+## Database Schemea Design and Data Definition Language.
 
-Designing tables and defining primary or foreign key relationships using **CREATE TABLE**.
+This defines how tables, columns and relationships are structured  before any records are stored.
+Four interconnected tables form the core model: **Categories, Suppliers, Products** and **Stock Movements or Transactions**.
+
+- **Primary Key (PRIMARY KEY)**: A unique identifier assigned to every row (product_id) that prevents duplicate records.
+- **Foreign Key (FOREIGN KEY)**: A reference column that points to the **PRIMARY KEY** of another table (linking product to its category).
+- **Constraints**: Database-level rules that keep data accurate:
+    - **NOT NULL**: Ensures a field cannot be left empty.
+    - **UNIQUE**: Prevents duplicate values.
+    - **CHECK**: Verifies that values meet specific logic rules.
+    - **DEFAULT**: Fills in a default value if none is provided during insertion.
+- **Data Types**:
+    - **INTEGER**: Whole numbers (IDs, quantities).
+    - **REAL**: Floating-point numbers (prices, monetary values).
+    - **TEXT**: String values (names, descriptions, SKUs).
+    - **DATETIME**: Timestamps.
+
 
 **Step 2**: Data Insertion and Querying.
 
@@ -33,7 +49,3 @@ Joining tables using **INNER JOIN** and calculating stock value using **GROUP BY
 **Step 4**: Data Intergrity and Business Logic.
 
 Enforcing business rues using **CONSTRAINTS** (e.g **CHECK (quantity >= 0)**), foreign key cascades and database triggers.
-
-## Database Schema Design and Data Definition Language
-
-This defines how
