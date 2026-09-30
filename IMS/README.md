@@ -19,7 +19,7 @@ In a Relational Database, an IMS relies on interconnected tables;
 ### Project Roadmap
 
 **Step 1**:
-## Database Schemea Design and Data Definition Language.
+## Database Schema Design and Data Definition Language.
 
 This defines how tables, columns and relationships are structured  before any records are stored.
 Four interconnected tables form the core model: **Categories, Suppliers, Products** and **Stock Movements or Transactions**.
@@ -65,6 +65,13 @@ The core SQL Joining and Aggregation CCOncepts:
     - **AVG()**: Calculates the mean value across grouped rows.
 - **HAVING Clause**: Filters aggregated groups after the **GROUP BY** calculation takes place. (Unlike **WHERE**, which filters individual rows before grouping occurs).
 
-**Step 4**: Data Intergrity and Business Logic.
+**Step 4**: 
+
+## Data Intergrity and Business Logic.
+
+Enforce **Data Integrity** through two powerful database objects:
+
+    - **Database Views (CREATE VIEW)**: Saved **SELECT** queuries stored inside the databae engine. They act like virtual tables, allowing Django or reporting tools to query complex joins without rewriting the code.
+    - **Database Triggers(CREATE TRIGGER)**: Event Listeners in the database that execute automatically when a row is inserted into **Stock_Movement**. If a sale **(OUT)** or restock **(IN)** occurs, the trigger handles updating the **Products** table automatically and blocks transactions that attempt to sell more stock than is available.
 
 Enforcing business rues using **CONSTRAINTS** (e.g **CHECK (quantity >= 0)**), foreign key cascades and database triggers.
