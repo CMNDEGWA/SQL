@@ -3,6 +3,12 @@ All my studies on SQL, through Simple SQL Projects
 
 ## Inventory Management System [IMS](IMS)
 
+### Tech Stack
+
+- SQLite
+- Django Framework.
+- VueJS Framework.
+
 An Inventory Management System (IMS) is a software application designed to track goods, stock levels, purchases and sales
 across a business.
 IMS uses a Relational Database to ensure accurate stock counts, track item movements, manage vendor details and prevent stockouts.
