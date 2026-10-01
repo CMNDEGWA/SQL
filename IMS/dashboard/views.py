@@ -5,6 +5,8 @@ from django.db.models import Sum, F
 from .models import Products, StockMovements, VInventorySummary
 from .forms import ProductForm, StockMovementForm
 
+LOW_STOCK_THRESHOLD = 10
+
 def inventory_dashboard(request):
     product_form = ProductForm()
     movement_form = StockMovementForm()
@@ -36,7 +38,7 @@ def inventory_dashboard(request):
 
     # Aggregations & Query Sets for Dashboard UI
     total_products = Products.objects.count()
-    low_stock_items = Products.objects.filter(quantity_in_stock__lte=10)
+    low_stock_items = Products.objects.filter(quantity_in_stock__lte=LOW_STOCK_THRESHOLD)
     inventory_summary = VInventorySummary.objects.all()
     
     total_value = Products.objects.aggregate(
@@ -48,6 +50,7 @@ def inventory_dashboard(request):
     context = {
         'total_products': total_products,
         'low_stock_count': low_stock_items.count(),
+        'low_stock_threshold': LOW_STOCK_THRESHOLD,
         'total_value': round(total_value, 2),
         'inventory_summary': inventory_summary,
         'recent_movements': recent_movements,

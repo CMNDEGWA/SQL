@@ -28,7 +28,7 @@ class Products(models.Model):
     supplier = models.ForeignKey(Suppliers, on_delete=models.SET_NULL, blank=True, null=True)
     unit_cost = models.FloatField()
     unit_price = models.FloatField()
-    quantity_in_stock = models.IntegerField()
+    quantity_in_stock = models.IntegerField(default=0)
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
