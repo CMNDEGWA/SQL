@@ -74,4 +74,29 @@ Enforce **Data Integrity** through two powerful database objects:
     - **Database Views (CREATE VIEW)**: Saved **SELECT** queuries stored inside the databae engine. They act like virtual tables, allowing Django or reporting tools to query complex joins without rewriting the code.
     - **Database Triggers(CREATE TRIGGER)**: Event Listeners in the database that execute automatically when a row is inserted into **Stock_Movement**. If a sale **(OUT)** or restock **(IN)** occurs, the trigger handles updating the **Products** table automatically and blocks transactions that attempt to sell more stock than is available.
 
-Enforcing business rues using **CONSTRAINTS** (e.g **CHECK (quantity >= 0)**), foreign key cascades and database triggers.
+# Django Framework Dashboard
+
+Building a Website User Interface on top of the custom SQL schema, triggers and database views.
+
+Instead of defining new tables through Django Migration, Django provides a built-in utility called **inspectdb**. This tool reads the existing database schema and auto-generates Python model clasees for the tables and database views.
+
+Through:
+
+    - Virtual Environment for DJango.
+    - Django Installation.
+    - Django Project and Application Structure.
+    - Connect Django to the SQLite Database.
+    - Auto-Generate Django Models from SQLite **(inspectdb)**.
+        It will contain models mapping to custom schema. **managed = False** in the **Meta** tells Django to read from and write to the SQL tables without modifying or overriding the database triggers and constraints.
+    - Dashboard View and Query Metrics.
+    - Configure URL Routes.
+    - Dashboard HTML Template.
+
+## Stock Entry Form
+
+**Django ModelForms** are used to record stock entries and add products directly from the User Interface.
+
+When a form posts new stock movements, standard Django ORM **INSERT** operations automatically fire the database triggers created in SQLite **(trg_update_stock_after_in, trg_update_stock_after_out, and trg_prevent_negative_stock)**.
+
+If a user tries to dispatch **(OUT)** more stock than is available, SQLite triggers aborts the transaction and Django catches the database error to display a user alert message.
+
