@@ -1,3 +1,24 @@
 IMS/inventory.db
 IMS/inventory_report.txt
 IMS/inventory.db.bak
+images/pasted file.txt
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+**/venv/
+**/.venv/
+
+# Local secrets and environment files
+.env
+.env.*
+
+# Local SQLite data and sidecar files
+/IMS/*.db
+/IMS/*.db-*
+/IMS/*.sqlite3
+
+# Django-generated files
+/IMS/staticfiles/
