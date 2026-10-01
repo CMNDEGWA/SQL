@@ -51,108 +51,509 @@
             </div>
             <div class="card">
                 <h3>Total Inventory Asset Value</h3>
-                <div class="metric">${{ total_value }}</div>
-            </div>
-            <div class="card">
-                <h3>Low Stock Alerts</h3>
-                <div class="metric badge-danger">{{ low_stock_count }} Items</div>
-            </div>
-        </div>
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Stock overview | Inventory Management</title>
+                    <link rel="preconnect" href="https://fonts.googleapis.com">
+                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+                    <style>
+                        :root {
+                            color-scheme: light;
+                            --page: #f1f4f2;
+                            --surface: #ffffff;
+                            --surface-soft: #f7f9f7;
+                            --ink: #1e2b27;
+                            --muted: #65736e;
+                            --line: #dce4df;
+                            --teal: #14776b;
+                            --teal-soft: #e5f2ef;
+                            --green: #54834c;
+                            --orange: #c8753f;
+                            --coral: #bd554d;
+                            --coral-soft: #f9eae8;
+                            --radius: 8px;
+                            --shadow: 0 8px 24px rgba(33, 55, 46, 0.055);
+                        }
 
-        <!-- Management Forms Section -->
-        <div class="form-grid">
-            <!-- Form 1: Add Product -->
-            <div class="card">
-                <h2>Add New Product</h2>
-                <form method="POST">
-                    {% csrf_token %}
-                    {% for field in product_form %}
-                        <div class="form-group">
-                            <label>{{ field.label }}</label>
-                            {{ field }}
-                            {{ field.errors }}
-                        </div>
-                    {% endfor %}
-                    <button type="submit" name="btn_add_product" class="btn">Add Product</button>
-                </form>
-            </div>
+                        * { box-sizing: border-box; }
+                        body {
+                            margin: 0;
+                            padding: 28px 30px 48px;
+                            background: var(--page);
+                            color: var(--ink);
+                            font-family: "Manrope", "Segoe UI", sans-serif;
+                            font-size: 14px;
+                            line-height: 1.5;
+                        }
+                        button, input, select, textarea { font: inherit; }
+                        .container { width: min(1440px, 100%); margin: 0 auto; }
+                        .masthead {
+                            display: flex;
+                            align-items: flex-end;
+                            justify-content: space-between;
+                            gap: 20px;
+                            padding: 0 0 22px;
+                            border-bottom: 1px solid var(--line);
+                        }
+                        .eyebrow {
+                            margin: 0 0 6px;
+                            color: var(--teal);
+                            font-size: 11px;
+                            font-weight: 800;
+                            text-transform: uppercase;
+                        }
+                        h1, h2, h3, p { margin-top: 0; }
+                        h1 { margin-bottom: 0; font-size: 26px; line-height: 1.2; font-weight: 800; }
+                        h2 { margin: 0; font-size: 17px; line-height: 1.3; font-weight: 800; }
+                        h3 { margin: 0; font-size: 14px; font-weight: 800; }
+                        .live-mark {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 8px;
+                            color: var(--muted);
+                            font-size: 12px;
+                            font-weight: 700;
+                        }
+                        .live-mark::before {
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            background: var(--green);
+                            content: "";
+                        }
+                        .messages { padding-top: 16px; }
+                        .alert {
+                            padding: 11px 14px;
+                            margin-bottom: 10px;
+                            border: 1px solid var(--line);
+                            border-radius: var(--radius);
+                            background: var(--surface);
+                            font-weight: 700;
+                        }
+                        .alert-success { border-color: #b9d8be; color: #356840; }
+                        .alert-error { border-color: #e8c3bf; background: var(--coral-soft); color: #8d3833; }
 
-            <!-- Form 2: Record Stock Movement -->
-            <div class="card">
-                <h2>Record Stock Movement (IN/OUT)</h2>
-                <form method="POST">
-                    {% csrf_token %}
-                    {% for field in movement_form %}
-                        <div class="form-group">
-                            <label>{{ field.label }}</label>
-                            {{ field }}
-                            {{ field.errors }}
-                        </div>
-                    {% endfor %}
-                    <button type="submit" name="btn_record_movement" class="btn">Submit Movement</button>
-                </form>
-            </div>
-        </div>
+                        .metric-strip {
+                            display: grid;
+                            grid-template-columns: repeat(3, minmax(0, 1fr));
+                            gap: 12px;
+                            margin: 22px 0 30px;
+                        }
+                        .metric-item {
+                            min-width: 0;
+                            padding: 16px 19px 17px;
+                            border: 1px solid var(--line);
+                            border-top: 3px solid var(--teal);
+                            border-radius: var(--radius);
+                            background: var(--surface);
+                            box-shadow: var(--shadow);
+                        }
+                        .metric-item--green { border-top-color: var(--green); }
+                        .metric-item--alert { border-top-color: var(--coral); }
+                        .metric-item dt { margin-bottom: 5px; color: var(--muted); font-size: 12px; font-weight: 700; }
+                        .metric-item dd { margin: 0; font-size: 25px; line-height: 1.2; font-weight: 800; overflow-wrap: anywhere; }
+                        .metric-item--alert dd { color: var(--coral); }
+                        .metric-unit { color: var(--muted); font-size: 13px; font-weight: 700; }
 
-        <!-- Live Master Summary View Table -->
-        <h2>Inventory Master Summary (Live Database View)</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>SKU</th>
-                    <th>Product Name</th>
-                    <th>Category</th>
-                    <th>Supplier</th>
-                    <th>In Stock</th>
-                    <th>Unit Cost</th>
-                    <th>Total Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in inventory_summary %}
-                <tr>
-                    <td><strong>{{ item.sku }}</strong></td>
-                    <td>{{ item.product_name }}</td>
-                    <td>{{ item.category_name }}</td>
-                    <td>{{ item.supplier_name }}</td>
-                    <td>
-                        {% if item.quantity_in_stock <= low_stock_threshold %}
-                            <span class="badge-danger">{{ item.quantity_in_stock }}</span>
-                        {% else %}
-                            {{ item.quantity_in_stock }}
+                        .analytics-grid {
+                            display: grid;
+                            grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.9fr);
+                            gap: 14px;
+                            margin-bottom: 34px;
+                        }
+                        .panel {
+                            min-width: 0;
+                            padding: 20px 21px;
+                            border: 1px solid var(--line);
+                            border-radius: var(--radius);
+                            background: var(--surface);
+                            box-shadow: var(--shadow);
+                        }
+                        .panel-heading {
+                            display: flex;
+                            align-items: flex-start;
+                            justify-content: space-between;
+                            gap: 12px;
+                            margin-bottom: 14px;
+                        }
+                        .panel-kicker { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+                        .chart-wrap { position: relative; width: 100%; height: 280px; }
+                        .chart-wrap--doughnut { height: 280px; }
+                        .empty-state {
+                            display: grid;
+                            min-height: 220px;
+                            place-items: center;
+                            padding: 20px;
+                            border: 1px dashed var(--line);
+                            border-radius: 6px;
+                            color: var(--muted);
+                            text-align: center;
+                            font-weight: 600;
+                        }
+                        .section { margin-top: 34px; }
+                        .section-heading {
+                            display: flex;
+                            align-items: baseline;
+                            justify-content: space-between;
+                            gap: 14px;
+                            padding-bottom: 12px;
+                            border-bottom: 1px solid var(--line);
+                            margin-bottom: 16px;
+                        }
+                        .section-meta { margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; }
+                        .operation-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+                        .operation-panel { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+                        .operation-panel h3 { margin-bottom: 17px; }
+                        .form-group { min-width: 0; margin-bottom: 13px; }
+                        .form-group label { display: block; margin-bottom: 5px; color: var(--ink); font-size: 12px; font-weight: 800; }
+                        .form-input {
+                            display: block;
+                            width: 100%;
+                            min-height: 40px;
+                            padding: 8px 10px;
+                            border: 1px solid #cbd6d0;
+                            border-radius: 5px;
+                            background: #fff;
+                            color: var(--ink);
+                        }
+                        .form-input:focus { outline: 3px solid rgba(20, 119, 107, 0.18); border-color: var(--teal); }
+                        textarea.form-input { min-height: 72px; resize: vertical; }
+                        .errorlist { padding: 0; margin: 5px 0 0; color: var(--coral); list-style: none; font-size: 12px; font-weight: 700; }
+                        .button {
+                            min-height: 40px;
+                            padding: 9px 15px;
+                            border: 1px solid var(--teal);
+                            border-radius: 5px;
+                            background: var(--teal);
+                            color: white;
+                            cursor: pointer;
+                            font-weight: 800;
+                        }
+                        .button:hover { background: #0d6157; }
+                        .button:focus-visible { outline: 3px solid rgba(20, 119, 107, 0.28); outline-offset: 2px; }
+                        .button--secondary { border-color: var(--line); background: var(--surface-soft); color: var(--ink); }
+                        .button--secondary:hover { background: #eaf0ec; }
+
+                        .table-scroll { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+                        table { width: 100%; min-width: 760px; border-collapse: collapse; text-align: left; }
+                        th, td { padding: 12px 14px; border-bottom: 1px solid #e8eeea; vertical-align: middle; }
+                        th { background: #e9efeb; color: #41514a; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+                        td { color: #33413b; font-size: 13px; }
+                        tbody tr:last-child td { border-bottom: 0; }
+                        tbody tr:hover { background: #f8faf8; }
+                        .numeric { text-align: right; font-variant-numeric: tabular-nums; }
+                        .sku { color: var(--teal); font-family: "DM Mono", monospace; font-size: 12px; font-weight: 500; }
+                        .stock-alert { display: inline-block; min-width: 34px; padding: 3px 7px; border-radius: 4px; background: var(--coral-soft); color: #963d37; text-align: center; font-weight: 800; }
+                        .movement-type { display: inline-block; padding: 3px 7px; border-radius: 4px; background: var(--teal-soft); color: #116458; font-family: "DM Mono", monospace; font-size: 11px; font-weight: 500; }
+                        .movement-type--out { background: #fff0e5; color: #9b552b; }
+                        .movement-type--adjustment { background: #eaf0e4; color: #4a713f; }
+                        .muted { color: var(--muted); }
+                        .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+                        @media (max-width: 900px) {
+                            body { padding: 22px 20px 36px; }
+                            .analytics-grid { grid-template-columns: minmax(0, 1fr); }
+                            .chart-wrap { height: 270px; }
+                        }
+                        @media (max-width: 640px) {
+                            body { padding: 18px 14px 28px; }
+                            .masthead { align-items: flex-start; flex-direction: column; gap: 9px; padding-bottom: 16px; }
+                            h1 { font-size: 22px; }
+                            .metric-strip { grid-template-columns: 1fr; gap: 8px; margin: 16px 0 24px; }
+                            .metric-item { padding: 13px 15px; }
+                            .metric-item dd { font-size: 22px; }
+                            .panel { padding: 16px 14px; }
+                            .chart-wrap, .chart-wrap--doughnut { height: 245px; }
+                            .operation-grid { grid-template-columns: minmax(0, 1fr); }
+                            .operation-panel { padding: 16px 14px; }
+                            .section { margin-top: 27px; }
+                            .section-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
+                            th, td { padding: 10px 11px; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <main class="container">
+                        <header class="masthead">
+                            <div>
+                                <p class="eyebrow">Inventory operations</p>
+                                <h1>Stock overview</h1>
+                            </div>
+                            <span class="live-mark">Current inventory</span>
+                        </header>
+
+                        {% if messages %}
+                            <div class="messages" aria-live="polite">
+                                {% for message in messages %}
+                                    <div class="alert alert-{% if message.tags == 'error' %}error{% else %}success{% endif %}" role="status">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         {% endif %}
-                    </td>
-                    <td>${{ item.unit_cost }}</td>
-                    <td>${{ item.total_inventory_value }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
 
-        <!-- Recent Audit Logs -->
-        <h2>Recent Movements Log</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Product</th>
-                    <th>Type</th>
-                    <th>Quantity</th>
-                    <th>Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for move in recent_movements %}
-                <tr>
-                    <td>{{ move.created_at|date:"Y-m-d H:i" }}</td>
-                    <td>{{ move.product.name }}</td>
-                    <td><strong>{{ move.movement_type }}</strong></td>
-                    <td>{{ move.quantity }}</td>
-                    <td>{{ move.notes }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>
+                        <dl class="metric-strip" aria-label="Inventory metrics">
+                            <div class="metric-item">
+                                <dt>Total product types</dt>
+                                <dd>{{ total_products }}</dd>
+                            </div>
+                            <div class="metric-item metric-item--green">
+                                <dt>Inventory value at cost</dt>
+                                <dd>${{ total_value }}</dd>
+                            </div>
+                            <div class="metric-item metric-item--alert">
+                                <dt>Low stock <span class="metric-unit">(10 or fewer)</span></dt>
+                                <dd>{{ low_stock_count }} <span class="metric-unit">items</span></dd>
+                            </div>
+                        </dl>
+
+                        <section class="analytics-grid" aria-label="Inventory analytics">
+                            <article class="panel">
+                                <div class="panel-heading">
+                                    <div>
+                                        <h2>Units in stock</h2>
+                                        <p class="panel-kicker">Cumulative movement history</p>
+                                    </div>
+                                </div>
+                                {% if stock_trend_labels %}
+                                    <div class="chart-wrap">
+                                        <canvas id="stock-trend-chart" role="img" aria-label="Line chart showing total units in stock over time"></canvas>
+                                    </div>
+                                {% else %}
+                                    <div class="empty-state">No movement history yet</div>
+                                {% endif %}
+                            </article>
+                            <article class="panel">
+                                <div class="panel-heading">
+                                    <div>
+                                        <h2>Value by category</h2>
+                                        <p class="panel-kicker">Inventory value at unit cost</p>
+                                    </div>
+                                </div>
+                                {% if category_value_labels %}
+                                    <div class="chart-wrap chart-wrap--doughnut">
+                                        <canvas id="category-value-chart" role="img" aria-label="Doughnut chart showing inventory cost value by category"></canvas>
+                                    </div>
+                                {% else %}
+                                    <div class="empty-state">No inventory value to chart</div>
+                                {% endif %}
+                            </article>
+                        </section>
+
+                        <section class="section" aria-labelledby="operations-heading">
+                            <div class="section-heading">
+                                <h2 id="operations-heading">Inventory operations</h2>
+                                <p class="section-meta">Add a product or record a stock movement</p>
+                            </div>
+                            <div class="operation-grid">
+                                <article class="operation-panel">
+                                    <h3>Add product</h3>
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        {% for field in product_form %}
+                                            <div class="form-group">
+                                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                {{ field }}
+                                                {{ field.errors }}
+                                            </div>
+                                        {% endfor %}
+                                        <button type="submit" name="btn_add_product" class="button button--secondary">Add product</button>
+                                    </form>
+                                </article>
+                                <article class="operation-panel">
+                                    <h3>Record stock movement</h3>
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        {% for field in movement_form %}
+                                            <div class="form-group">
+                                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                {{ field }}
+                                                {{ field.errors }}
+                                            </div>
+                                        {% endfor %}
+                                        <button type="submit" name="btn_record_movement" class="button">Record movement</button>
+                                    </form>
+                                </article>
+                            </div>
+                        </section>
+
+                        <section class="section" aria-labelledby="inventory-heading">
+                            <div class="section-heading">
+                                <h2 id="inventory-heading">Inventory</h2>
+                                <p class="section-meta">{{ total_products }} product types</p>
+                            </div>
+                            <div class="table-scroll">
+                                <table>
+                                    <caption class="visually-hidden">Inventory by product, category, supplier, stock, and value</caption>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">SKU</th>
+                                            <th scope="col">Product</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Supplier</th>
+                                            <th scope="col" class="numeric">In stock</th>
+                                            <th scope="col" class="numeric">Unit cost</th>
+                                            <th scope="col" class="numeric">Total value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in inventory_summary %}
+                                            <tr>
+                                                <td class="sku">{{ item.sku }}</td>
+                                                <td><strong>{{ item.product_name }}</strong></td>
+                                                <td>{{ item.category_name|default:"Uncategorized" }}</td>
+                                                <td>{{ item.supplier_name|default:"-" }}</td>
+                                                <td class="numeric">
+                                                    {% if item.quantity_in_stock <= low_stock_threshold %}
+                                                        <span class="stock-alert">{{ item.quantity_in_stock }}</span>
+                                                    {% else %}
+                                                        {{ item.quantity_in_stock }}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="numeric">${{ item.unit_cost|floatformat:2 }}</td>
+                                                <td class="numeric">${{ item.total_inventory_value|floatformat:2 }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr><td colspan="7" class="muted">No products recorded</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section class="section" aria-labelledby="movements-heading">
+                            <div class="section-heading">
+                                <h2 id="movements-heading">Recent movements</h2>
+                                <p class="section-meta">Latest 5 ledger entries</p>
+                            </div>
+                            <div class="table-scroll">
+                                <table>
+                                    <caption class="visually-hidden">Recent inventory stock movements</caption>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Product</th>
+                                            <th scope="col">Type</th>
+                                            <th scope="col" class="numeric">Quantity</th>
+                                            <th scope="col">Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for move in recent_movements %}
+                                            <tr>
+                                                <td>{{ move.created_at|date:"Y-m-d H:i" }}</td>
+                                                <td><strong>{{ move.product.name }}</strong></td>
+                                                <td><span class="movement-type{% if move.movement_type == 'OUT' %} movement-type--out{% elif move.movement_type == 'ADJUSTMENT' %} movement-type--adjustment{% endif %}">{{ move.movement_type }}</span></td>
+                                                <td class="numeric">{{ move.quantity }}</td>
+                                                <td>{{ move.notes|default:"-" }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr><td colspan="5" class="muted">No movements recorded</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </main>
+
+                    {{ stock_trend_labels|json_script:"stock-trend-labels" }}
+                    {{ stock_trend_values|json_script:"stock-trend-values" }}
+                    {{ category_value_labels|json_script:"category-value-labels" }}
+                    {{ category_value_data|json_script:"category-value-data" }}
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+                    <script>
+                        const readChartData = (id) => JSON.parse(document.getElementById(id).textContent);
+                        const stockCanvas = document.getElementById("stock-trend-chart");
+                        const categoryCanvas = document.getElementById("category-value-chart");
+                        const chartFont = { family: "Manrope, sans-serif", size: 11 };
+                        const currencyFormat = new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                            maximumFractionDigits: 0
+                        });
+
+                        if (window.Chart && stockCanvas) {
+                            new Chart(stockCanvas, {
+                                type: "line",
+                                data: {
+                                    labels: readChartData("stock-trend-labels"),
+                                    datasets: [{
+                                        label: "Units in stock",
+                                        data: readChartData("stock-trend-values"),
+                                        borderColor: "#14776b",
+                                        backgroundColor: "rgba(20, 119, 107, 0.12)",
+                                        borderWidth: 2.5,
+                                        fill: true,
+                                        tension: 0.28,
+                                        pointRadius: 3,
+                                        pointHoverRadius: 5,
+                                        pointBackgroundColor: "#ffffff",
+                                        pointBorderColor: "#14776b",
+                                        pointBorderWidth: 2
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    interaction: { intersect: false, mode: "index" },
+                                    plugins: {
+                                        legend: { display: false },
+                                        tooltip: { titleFont: chartFont, bodyFont: chartFont }
+                                    },
+                                    scales: {
+                                        x: {
+                                            grid: { display: false },
+                                            ticks: { color: "#65736e", maxTicksLimit: 7, font: chartFont }
+                                        },
+                                        y: {
+                                            beginAtZero: true,
+                                            grid: { color: "#e8eeea" },
+                                            ticks: { color: "#65736e", precision: 0, font: chartFont }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        if (window.Chart && categoryCanvas) {
+                            new Chart(categoryCanvas, {
+                                type: "doughnut",
+                                data: {
+                                    labels: readChartData("category-value-labels"),
+                                    datasets: [{
+                                        data: readChartData("category-value-data"),
+                                        backgroundColor: ["#14776b", "#54834c", "#c8753f", "#bd554d", "#6276a3", "#9b7a36"],
+                                        borderColor: "#ffffff",
+                                        borderWidth: 3,
+                                        hoverOffset: 5
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    cutout: "66%",
+                                    plugins: {
+                                        legend: {
+                                            position: "bottom",
+                                            labels: { color: "#41514a", padding: 14, usePointStyle: true, pointStyle: "circle", font: chartFont }
+                                        },
+                                        tooltip: {
+                                            titleFont: chartFont,
+                                            bodyFont: chartFont,
+                                            callbacks: {
+                                                label(context) {
+                                                    return `${context.label}: ${currencyFormat.format(context.parsed)}`;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    </script>
+                </body>
+                </html>

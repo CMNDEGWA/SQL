@@ -1,5 +1,6 @@
 import sqlite3
 import tempfile
+from datetime import datetime, timezone as datetime_timezone
 from pathlib import Path
 
 from django.db import IntegrityError, connection
@@ -121,6 +122,78 @@ class InventoryDatabaseTests(TransactionTestCase):
 				[product.product_id],
 			)
 			self.assertEqual(cursor.fetchone()[0], 1)
+
+	def test_dashboard_chart_data_uses_signed_daily_stock_changes(self):
+		first_day = datetime(2026, 9, 29, tzinfo=datetime_timezone.utc)
+		second_day = datetime(2026, 9, 30, tzinfo=datetime_timezone.utc)
+		StockMovements.objects.update(created_at=first_day)
+		laptop = Products.objects.get(sku="ELEC001")
+
+		for movement_type, quantity in (("IN", 5), ("OUT", 3), ("ADJUSTMENT", -2)):
+			StockMovements.objects.create(
+				product=laptop,
+				movement_type=movement_type,
+				quantity=quantity,
+				created_at=first_day,
+			)
+		for movement_type, quantity in (("OUT", 10), ("ADJUSTMENT", 3)):
+			StockMovements.objects.create(
+				product=laptop,
+				movement_type=movement_type,
+				quantity=quantity,
+				created_at=second_day,
+			)
+
+		response = self.client.get("/", HTTP_HOST="localhost")
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.context["stock_trend_labels"], ["2026-09-29", "2026-09-30"])
+		self.assertEqual(response.context["stock_trend_values"], [1010, 1003])
+
+	def test_dashboard_category_chart_uses_cost_and_includes_uncategorized(self):
+		product_form = ProductForm(data={
+			"sku": "UNCAT-001",
+			"name": "Uncategorized stock",
+			"category": "",
+			"supplier": "",
+			"unit_cost": "2.00",
+			"unit_price": "4.00",
+		})
+		self.assertTrue(product_form.is_valid(), product_form.errors)
+		product = product_form.save()
+		StockMovements.objects.create(
+			product=product,
+			movement_type="IN",
+			quantity=3,
+			notes="chart fixture",
+		)
+
+		response = self.client.get("/", HTTP_HOST="localhost")
+
+		self.assertEqual(response.status_code, 200)
+		category_values = dict(zip(
+			response.context["category_value_labels"],
+			response.context["category_value_data"],
+		))
+		self.assertEqual(category_values["Books"], 1600.0)
+		self.assertEqual(category_values["Electronics"], 45000.0)
+		self.assertEqual(category_values["Uncategorized"], 6.0)
+		self.assertIn(b'id="stock-trend-labels"', response.content)
+		self.assertIn(b'id="category-value-data"', response.content)
+		self.assertIn(b'id="stock-trend-chart"', response.content)
+		self.assertIn(b'id="category-value-chart"', response.content)
+
+	def test_dashboard_displays_empty_chart_states_without_inventory_data(self):
+		StockMovements.objects.all().delete()
+		Products.objects.update(quantity_in_stock=0)
+
+		response = self.client.get("/", HTTP_HOST="localhost")
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.context["stock_trend_labels"], [])
+		self.assertEqual(response.context["category_value_labels"], [])
+		self.assertContains(response, "No movement history yet")
+		self.assertContains(response, "No inventory value to chart")
 
 	def test_migration_preserves_rows_and_is_idempotent(self):
 		with tempfile.TemporaryDirectory() as temporary_directory:
