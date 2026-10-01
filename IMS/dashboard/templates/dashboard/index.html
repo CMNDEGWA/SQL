@@ -70,6 +70,7 @@
                         <div class="form-group">
                             <label>{{ field.label }}</label>
                             {{ field }}
+                            {{ field.errors }}
                         </div>
                     {% endfor %}
                     <button type="submit" name="btn_add_product" class="btn">Add Product</button>
@@ -85,6 +86,7 @@
                         <div class="form-group">
                             <label>{{ field.label }}</label>
                             {{ field }}
+                            {{ field.errors }}
                         </div>
                     {% endfor %}
                     <button type="submit" name="btn_record_movement" class="btn">Submit Movement</button>
@@ -114,7 +116,7 @@
                     <td>{{ item.category_name }}</td>
                     <td>{{ item.supplier_name }}</td>
                     <td>
-                        {% if item.quantity_in_stock <= 10 %}
+                        {% if item.quantity_in_stock <= low_stock_threshold %}
                             <span class="badge-danger">{{ item.quantity_in_stock }}</span>
                         {% else %}
                             {{ item.quantity_in_stock }}
