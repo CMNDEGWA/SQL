@@ -37,7 +37,10 @@ CREATE TABLE IF NOT EXISTS Stock_Movements (
     movement_id INTEGER PRIMARY KEY AUTOINCREMENT,
     product_id INTEGER NOT NULL,
     movement_type TEXT NOT NULL CHECK (movement_type IN ('IN', 'OUT', 'ADJUSTMENT')),
-    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    quantity INTEGER NOT NULL CHECK (
+        (movement_type = 'ADJUSTMENT' AND quantity <> 0)
+        OR (movement_type IN ('IN', 'OUT') AND quantity > 0)
+    ),
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE CASCADE

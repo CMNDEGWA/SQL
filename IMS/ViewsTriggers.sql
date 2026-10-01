@@ -32,7 +32,7 @@ SELECT
     name AS product_name,
     quantity_in_stock
 FROM products
-WHERE quantity_in_stock < 10;
+WHERE quantity_in_stock <= 10;
 
 -- ============================================================================
 -- SQL TRIGGERS (AUTOMATED STOCK UPDATES & INTEGRITY ENFORCEMENT)
@@ -49,6 +49,17 @@ WHEN NEW.movement_type = 'OUT' AND (
 )
 BEGIN
     SELECT RAISE(ABORT, 'Erro: Insufficient stock available for this transaction.');
+END;
+
+DROP TRIGGER IF EXISTS trg_prevent_negative_adjustment;
+CREATE TRIGGER IF NOT EXISTS trg_prevent_negative_adjustment
+BEFORE INSERT ON stock_movements
+FOR EACH ROW
+WHEN NEW.movement_type = 'ADJUSTMENT' AND (
+    (SELECT quantity_in_stock FROM products WHERE product_id = NEW.product_id) + NEW.quantity < 0
+)
+BEGIN
+    SELECT RAISE(ABORT, 'Error: Adjustment would result in negative stock.');
 END;
 
 -- Automatically INCREASE stock when an 'IN' movement is recorded
@@ -72,5 +83,16 @@ WHEN NEW.movement_type = 'OUT'
 BEGIN
     UPDATE products
     SET quantity_in_stock = quantity_in_stock - NEW.quantity
+    WHERE product_id = NEW.product_id;
+END;
+
+DROP TRIGGER IF EXISTS trg_update_stock_after_adjustment;
+CREATE TRIGGER IF NOT EXISTS trg_update_stock_after_adjustment
+AFTER INSERT ON stock_movements
+FOR EACH ROW
+WHEN NEW.movement_type = 'ADJUSTMENT'
+BEGIN
+    UPDATE products
+    SET quantity_in_stock = quantity_in_stock + NEW.quantity
     WHERE product_id = NEW.product_id;
 END;

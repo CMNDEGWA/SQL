@@ -19,12 +19,12 @@ INSERT OR IGNORE INTO Suppliers (name, contact_email, phone, address) VALUES
 INSERT OR IGNORE INTO Products
 	(sku, name, category_id, supplier_id, unit_cost, unit_price, quantity_in_stock)
 VALUES
-('ELEC001','Laptop',(SELECT category_id FROM Categories WHERE name = 'Electronics'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@techworldelectronics.com'),500.00,700.00,50),
-('ELEC002','Smartphone',(SELECT category_id FROM Categories WHERE name = 'Electronics'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@techworldelectronics.com'),200.00,300.00,100),
-('BOOK001','The Great Gatsby',(SELECT category_id FROM Categories WHERE name = 'Books'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@bookhaven.com'),5.00,10.00,200),
-('BOOK002','1984',(SELECT category_id FROM Categories WHERE name = 'Books'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@bookhaven.com'),4.00,8.00,150),
-('FARM001','Tractor',(SELECT category_id FROM Categories WHERE name = 'Farm'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@agritechsupplies.com'),1500.00,2000.00,10),
-('FARM002','Fertilizer',(SELECT category_id FROM Categories WHERE name = 'Farm'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@agritechsupplies.com'),20.00,30.00,500);
+('ELEC001','Laptop',(SELECT category_id FROM Categories WHERE name = 'Electronics'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@techworldelectronics.com'),500.00,700.00,0),
+('ELEC002','Smartphone',(SELECT category_id FROM Categories WHERE name = 'Electronics'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@techworldelectronics.com'),200.00,300.00,0),
+('BOOK001','The Great Gatsby',(SELECT category_id FROM Categories WHERE name = 'Books'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@bookhaven.com'),5.00,10.00,0),
+('BOOK002','1984',(SELECT category_id FROM Categories WHERE name = 'Books'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@bookhaven.com'),4.00,8.00,0),
+('FARM001','Tractor',(SELECT category_id FROM Categories WHERE name = 'Farm'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@agritechsupplies.com'),1500.00,2000.00,0),
+('FARM002','Fertilizer',(SELECT category_id FROM Categories WHERE name = 'Farm'),(SELECT supplier_id FROM Suppliers WHERE contact_email = 'contact@agritechsupplies.com'),20.00,30.00,0);
 
 -- Data into Stock Movements Table
 WITH seed(sku, movement_type, quantity, notes) AS (
